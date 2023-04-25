@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders homepage unchanged 1`] = `
+<div>
+  <div
+    class="m-5 flex flex-col items-center font-mono"
+  >
+    <div
+      class="mb-5 flex justify-center"
+      id="top-bar"
+    >
+      <h1
+        class="w-fit cursor-pointer text-center text-2xl hover:font-bold"
+      >
+        Passfort.wiki
+      </h1>
+    </div>
+    <div>
+      <div
+        class="mb-4"
+      >
+        Welcome to Passfort.wiki, please select from the below pages, or create your own!
+      </div>
+      <article
+        class="prose m-5 w-full border-b-2 border-t-2"
+        id="content-list"
+      >
+        <ul
+          class="flex flex-col"
+        />
+      </article>
+      <a
+        class="mb-2 cursor-pointer hover:font-bold"
+        href="/create"
+      >
+        Create new page
+      </a>
+    </div>
+  </div>
+</div>
+`;
