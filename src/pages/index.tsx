@@ -82,7 +82,7 @@ const Content: FunctionComponent<Pages> = ({ titles }) => {
                     to={"/create"}
                     key="create"
                 >
-                    Create new page
+                    Create New Page
                 </Link>
             </article>
         </div>

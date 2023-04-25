@@ -20,6 +20,16 @@ describe("Home", () => {
 
         expect(heading).toBeInTheDocument();
     });
+
+    it("renders buttons", () => {
+        render(<Home />, { wrapper: Router });
+
+        const creteNewPage = screen.getByRole("link", {
+            name: /Create New Page/i,
+        });
+
+        expect(creteNewPage).toBeInTheDocument();
+    });
 });
 
 describe("Page", () => {
