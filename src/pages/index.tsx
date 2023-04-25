@@ -244,7 +244,7 @@ export const EditPage: FunctionComponent = () => {
     const toggleDisableEdit = (nt?: string) => {
         nt = nt ?? newTitle;
         setDisableEdit(
-            inputRef.current.value === content ||
+            inputRef.current?.value === content ||
                 (title ? title.length === 0 : true && nt.length === 0),
         );
     };
