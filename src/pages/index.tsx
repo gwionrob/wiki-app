@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Routes, Route, Link, useParams, useNavigate } from "react-router-dom";
 import type { NextPage } from "next";
-import type { FunctionComponent } from "react";
+import type { FormEvent, FunctionComponent } from "react";
+import ReactMarkdown from "react-markdown";
 
 type Pages = {
     titles: Array<string>;
@@ -30,17 +31,19 @@ const Home: NextPage = () => {
     }, [navigate]);
 
     return (
-        <div className="m-4 flex flex-col font-mono">
-            <h1
-                className="cursor-pointer text-center text-2xl"
-                onClick={() => navigate("/")}
-            >
-                Passfort.wiki
-            </h1>
+        <div className="m-5 flex flex-col items-center font-mono">
+            <div id="top-bar" className="mb-5 flex justify-center">
+                <h1
+                    className="w-fit cursor-pointer text-center text-2xl hover:font-bold"
+                    onClick={() => navigate("/")}
+                >
+                    Passfort.wiki
+                </h1>
+            </div>
 
             <Routes>
                 <Route path="/" element={<Content titles={titles} />} />
-                <Route path="/page/:title" element={<Page />} />
+                <Route path="/page/:title/:revision?" element={<Page />} />
                 <Route path="/create/:title?" element={<EditPage />} />
             </Routes>
         </div>
@@ -52,23 +55,34 @@ const Content: FunctionComponent<Pages> = ({ titles }) => {
 
     for (const title of titles) {
         links.push(
-            <Link
-                className="mb-2 cursor-pointer"
-                to={`page/${title}`}
-                key={title}
-            >
-                {"\u2022 " + title}
-            </Link>,
+            <li className="mb-2" key={title}>
+                <Link
+                    className="cursor-pointer hover:font-bold"
+                    to={`page/${title}`}
+                >
+                    {title}
+                </Link>
+            </li>,
         );
     }
 
     return (
         <div>
-            <h1 className="mb-2">Welcome to Passfort.wiki</h1>
-            <div id="content-list">
-                <ul className="flex flex-col">{links}</ul>
+            <div className="mb-4">
+                Welcome to Passfort.wiki, please select from the below pages, or
+                create your own!
             </div>
-            <Link className="mb-2 cursor-pointer" to={"/create"} key="create">
+            <article
+                id="content-list"
+                className="prose m-5 w-full border-b-2 border-t-2"
+            >
+                <ul className="flex flex-col">{links}</ul>
+            </article>
+            <Link
+                className="mb-2 cursor-pointer hover:font-bold"
+                to={"/create"}
+                key="create"
+            >
                 Create new page
             </Link>
         </div>
@@ -76,14 +90,14 @@ const Content: FunctionComponent<Pages> = ({ titles }) => {
 };
 
 const Page: FunctionComponent = () => {
-    const { title } = useParams();
+    const { title, revision } = useParams();
     const [content, setContent] = useState("");
-    const [revision, setRevision] = useState<string>("latest");
+    const navigate = useNavigate();
     const [revisions, setRevisions] = useState<Array<number>>([]);
 
     useEffect(() => {
         Promise.all([
-            fetch(`/api/page/${title ?? ""}/${revision}`),
+            fetch(`/api/page/${title ?? ""}/${revision ?? "latest"}`),
             fetch(`/api/page/${title ?? ""}`),
         ])
             .then(([resContent, resRevisions]) =>
@@ -100,25 +114,67 @@ const Page: FunctionComponent = () => {
     }, [title, revision]);
 
     const revisionSelect = (
-        <select onChange={(event) => setRevision(event.target.value)}>
-            {revisions.map((revision, index) => (
-                <option value={revision} key={index}>
-                    {new Date(revision * 1000).toString()}
+        <select
+            className="cursor-pointer"
+            value={revision}
+            onChange={(event) =>
+                navigate(
+                    `${revision ? `../page/${title ?? ""}/` : ""}${
+                        event.target.value
+                    }/`,
+                )
+            }
+        >
+            {revisions.map((rev, index) => (
+                <option value={rev} key={index}>
+                    {new Date(rev * 1000)
+                        .toLocaleDateString("en-GB", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                            hour: "numeric",
+                            minute: "numeric",
+                            second: "numeric",
+                        })
+                        .replace(",", " -")}
                 </option>
             ))}
         </select>
     );
 
     return (
-        <div>
-            <h1>{content}</h1>
-            {revisionSelect}
-            <Link className="" to="/" key={"home"}>
-                Return Home
-            </Link>
-            <Link className="" to={`/create/${title ?? ""}`} key={"change"}>
-                Change Page
-            </Link>
+        <div className="flex min-h-[85vh] max-w-4xl flex-col break-all rounded-2xl border-2 border-black">
+            <div
+                id="revision-container"
+                className="m-5 flex flex-row items-center justify-between"
+            >
+                <div className="w-90 m-1 h-fit rounded-md border-2 border-black p-2 text-center text-black hover:font-bold">
+                    <span>History: </span>
+                    {revisionSelect}
+                </div>
+                <div className="flex flex-col justify-evenly">
+                    <Link
+                        className="m-1 w-28 cursor-pointer rounded-md border-2 border-blue-700 text-center text-blue-700 hover:font-bold"
+                        to={`/create/${title ?? ""}`}
+                        key={"change"}
+                    >
+                        Edit Page
+                    </Link>
+                    <Link
+                        className="w-30 m-1 cursor-pointer rounded-md border-2 border-blue-700 text-center text-blue-700 hover:font-bold"
+                        to="/"
+                        key={"home"}
+                    >
+                        Return Home
+                    </Link>
+                </div>
+            </div>
+            <div className="m-2 ml-5 mr-5 border-t-2 pt-3 text-center text-2xl font-extrabold underline">
+                {title}
+            </div>
+            <article className="prose m-5 mt-2 w-[80vw] border-b-2 border-t-2 p-4">
+                <ReactMarkdown className="">{content}</ReactMarkdown>
+            </article>
         </div>
     );
 };
@@ -127,8 +183,9 @@ const EditPage: FunctionComponent = () => {
     const { title } = useParams();
     const [content, setContent] = useState("");
     const [newTitle, setNewTitle] = useState("");
+    const [disableEdit, setDisableEdit] = useState(true);
     const navigate = useNavigate();
-    const inputRef = useRef<HTMLInputElement>(null);
+    const inputRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
         if (title ? title.length : false) {
@@ -154,41 +211,67 @@ const EditPage: FunctionComponent = () => {
             }),
         })
             .then((res) => console.log(res))
-            .catch(() => console.log("Page creation / edit failed."));
+            .catch((error) => console.log(error));
 
-        navigate(`../../page/${change}`);
+        navigate(`../page/${change}`);
+    };
+
+    const handleInputFN = (event: FormEvent) => {
+        const input = event.currentTarget as HTMLInputElement;
+        const validChars = "abcdefghijklmnopqrstuvwxyz0123456789";
+        const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const lastVal = input.value[input.value.length - 1] ?? "";
+        let newVal: string;
+
+        if (!validChars.includes(lastVal)) {
+            const shortVal = input.value.substring(0, input.value.length - 1);
+            if (upperCase.includes(lastVal))
+                newVal = shortVal + lastVal.toLowerCase();
+            else newVal = shortVal;
+            input.value = newVal;
+        }
+        setNewTitle(input.value);
+        toggleDisableEdit(input.value);
+    };
+
+    const toggleDisableEdit = (nt?: string) => {
+        nt = nt ?? newTitle;
+        setDisableEdit(
+            inputRef.current.value === content ||
+                (title ? title.length === 0 : true && nt.length === 0),
+        );
     };
 
     return (
-        <div className="flex flex-col items-center justify-center">
-            <input
-                className="mt-5 w-3/4 rounded-md border-2 border-red-300"
+        <div className="flex h-[85vh] flex-col items-center">
+            <div>
+                Editing: {title ?? (newTitle.length ? newTitle : "New Page")}
+            </div>
+            <textarea
+                className="mt-5 h-1/3 w-[80vw] max-w-4xl rounded-md border-2 border-gray-700"
                 placeholder="Input page content here..."
                 defaultValue={content}
                 ref={inputRef}
+                onChange={() => toggleDisableEdit()}
             />
-            <div className="mt-5 flex w-fit flex-row justify-evenly">
+            <div className="mt-5 flex h-8 w-3/4 flex-row justify-evenly">
                 {title?.length ? null : (
                     <input
                         placeholder="Page Name:"
-                        className="w-1/2 rounded-md border-2 border-red-300"
-                        onChange={(event) =>
-                            setNewTitle(event.currentTarget.value)
-                        }
+                        className="w-1/2 rounded-md border-2 border-gray-700"
+                        onInput={handleInputFN}
                     />
                 )}
-                <button className="" onClick={handleEditPage}>
+                <button
+                    className="w-20 cursor-pointer rounded-md border-2 border-green-700 text-green-700 enabled:hover:font-bold disabled:cursor-auto disabled:border-gray-400 disabled:text-gray-400"
+                    disabled={disableEdit}
+                    onClick={handleEditPage}
+                >
                     Create
                 </button>
                 <button
-                    className=""
-                    onClick={() =>
-                        navigate(
-                            newTitle.length
-                                ? "../../"
-                                : `../../page/${title ?? ""}`,
-                        )
-                    }
+                    className="w-24 cursor-pointer rounded-md border-2 border-red-700 text-red-700 hover:font-bold"
+                    onClick={() => navigate(-1)}
                 >
                     Discard
                 </button>
