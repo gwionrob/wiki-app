@@ -17,7 +17,7 @@ type RevisionsData = {
     revisions: Array<number>;
 };
 
-const Home: NextPage = () => {
+export const Home: NextPage = () => {
     const [titles, setTitles] = useState<Array<string>>([]);
     const navigate = useNavigate();
 
@@ -67,29 +67,29 @@ const Content: FunctionComponent<Pages> = ({ titles }) => {
     }
 
     return (
-        <div>
+        <div className="flex flex-col items-center justify-center">
             <div className="mb-4">
                 Welcome to Passfort.wiki, please select from the below pages, or
                 create your own!
             </div>
             <article
                 id="content-list"
-                className="prose m-5 w-full border-b-2 border-t-2"
+                className="prose m-10 w-full border-b-2 border-t-2 pb-4"
             >
                 <ul className="flex flex-col">{links}</ul>
+                <Link
+                    className="ml-2 cursor-pointer rounded-md border-2 border-blue-700 p-2 text-blue-700 no-underline enabled:hover:font-bold disabled:cursor-auto disabled:border-gray-400 disabled:text-gray-400"
+                    to={"/create"}
+                    key="create"
+                >
+                    Create new page
+                </Link>
             </article>
-            <Link
-                className="mb-2 cursor-pointer hover:font-bold"
-                to={"/create"}
-                key="create"
-            >
-                Create new page
-            </Link>
         </div>
     );
 };
 
-const Page: FunctionComponent = () => {
+export const Page: FunctionComponent = () => {
     const { title, revision } = useParams();
     const [content, setContent] = useState("");
     const navigate = useNavigate();
@@ -110,7 +110,13 @@ const Page: FunctionComponent = () => {
                 setContent(dataContent.data);
                 setRevisions(dataRevisions.revisions.reverse());
             })
-            .catch(() => setContent("Page not found..."));
+            .catch(() =>
+                setContent(
+                    `Page: ${
+                        title ?? ""
+                    } not found, select Edit Page above to create it, or Return Home to view created documents.`,
+                ),
+            );
     }, [title, revision]);
 
     const revisionSelect = (
@@ -172,14 +178,14 @@ const Page: FunctionComponent = () => {
             <div className="m-2 ml-5 mr-5 border-t-2 pt-3 text-center text-2xl font-extrabold underline">
                 {title}
             </div>
-            <article className="prose m-5 mt-2 w-[80vw] border-b-2 border-t-2 p-4">
-                <ReactMarkdown className="">{content}</ReactMarkdown>
+            <article className="prose m-5 mt-2 w-[80vw] break-keep border-b-2 border-t-2 p-4">
+                <ReactMarkdown>{content}</ReactMarkdown>
             </article>
         </div>
     );
 };
 
-const EditPage: FunctionComponent = () => {
+export const EditPage: FunctionComponent = () => {
     const { title } = useParams();
     const [content, setContent] = useState("");
     const [newTitle, setNewTitle] = useState("");

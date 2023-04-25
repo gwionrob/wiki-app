@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react";
-import Home from "../pages/index";
+import { Home, Page, EditPage } from "../pages/index";
 import { BrowserRouter as Router } from "react-router-dom";
 import "whatwg-fetch";
 
@@ -11,5 +11,15 @@ jest.mock("react-router-dom", () => ({
 
 it("renders homepage unchanged", () => {
     const { container } = render(<Home />, { wrapper: Router });
+    expect(container).toMatchSnapshot();
+});
+
+it("renders page unchanged", () => {
+    const { container } = render(<Page />, { wrapper: Router });
+    expect(container).toMatchSnapshot();
+});
+
+it("renders editpage unchanged", () => {
+    const { container } = render(<EditPage />, { wrapper: Router });
     expect(container).toMatchSnapshot();
 });
