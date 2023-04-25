@@ -4,13 +4,13 @@ import time
 from flask import Flask, abort, jsonify, request
 from flask.ext.cors import CORS
 
-app = Flask(__name__, static_folder='static')
+app = Flask(__name__, static_folder="static")
 CORS(app)
 
 
-@app.route('/')
+@app.route("/")
 def index():
-    with open('./templates/index.html', 'rb') as f:
+    with open("./templates/index.html", "rb") as f:
         return f.read()
 
 
@@ -18,12 +18,12 @@ valid_chars = "abcdefghijklmnopqrstuvwxyz0123456789"
 
 
 def filter_hidden(files):
-    return [f for f in files if not f.startswith('.')]
+    return [f for f in files if not f.startswith(".")]
 
 
 def page_to_path(page):
-    clean_page = ''.join([c for c in page if c in valid_chars])
-    return './pages/%s' % clean_page
+    clean_page = "".join([c for c in page if c in valid_chars])
+    return "./pages/%s" % clean_page
 
 
 def get_revisions(page):
@@ -38,18 +38,18 @@ def get_revisions(page):
 def get_revision(page, timestamp):
     try:
         page_path = "%s/%i" % (page_to_path(page), timestamp)
-        with open(page_path, 'r') as f:
+        with open(page_path, "r") as f:
             return jsonify(data=f.read(), title=page)
     except:
         abort(404)
 
 
-@app.route('/pages')
+@app.route("/pages")
 def list_titles():
-    return jsonify(titles=filter_hidden(os.listdir('./pages')))
+    return jsonify(titles=filter_hidden(os.listdir("./pages")))
 
 
-@app.route('/page/<page>', methods=['GET'])
+@app.route("/page/<page>", methods=["GET"])
 def list_revisions(page):
     try:
         return jsonify(revisions=get_revisions(page))
@@ -57,16 +57,15 @@ def list_revisions(page):
         abort(404)
 
 
-@app.route('/page/<page>/latest', methods=['GET'])
+@app.route("/page/<page>/latest", methods=["GET"])
 def get_latest_revision(page):
     latest = get_revisions(page)[-1]
     return get_revision(page, latest)
 
 
-@app.route('/page/<page>/<int:timestamp>', methods=['GET'])
+@app.route("/page/<page>/<int:timestamp>", methods=["GET"])
 def get_revision_at_time(page, timestamp):
     revisions = get_revisions(page)
-    print(revisions)
 
     if timestamp < revisions[0]:
         abort(404)
@@ -81,9 +80,9 @@ def get_revision_at_time(page, timestamp):
     return get_revision(page, selected_revision)
 
 
-@app.route('/page/<page>', methods=['POST'])
+@app.route("/page/<page>", methods=["POST"])
 def write_page(page):
-    new_revision = request.json['page']
+    new_revision = request.json["page"].encode(encoding="UTF-8")
     current_time = int(time.time())
 
     path = page_to_path(page)
@@ -94,10 +93,10 @@ def write_page(page):
         os.mkdir(path)
 
     page_path = "%s/%i" % (page_to_path(page), current_time)
-    with open(page_path, 'wb') as f:
+    with open(page_path, "wb") as f:
         f.write(new_revision)
         return "success"
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(port=5003, debug=True, host="0.0.0.0")
