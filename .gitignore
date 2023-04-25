@@ -20,6 +20,8 @@ next-env.d.ts
 # production
 /build
 
+/src/server/pages/*
+
 # misc
 .DS_Store
 *.pem
