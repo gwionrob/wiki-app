@@ -45,6 +45,7 @@ export const Home: NextPage = () => {
                 <Route path="/" element={<Content titles={titles} />} />
                 <Route path="/page/:title/:revision?" element={<Page />} />
                 <Route path="/create/:title?" element={<EditPage />} />
+                <Route path="*" element={<ErrorPage />} />
             </Routes>
         </div>
     );
@@ -280,6 +281,30 @@ export const EditPage: FunctionComponent = () => {
                     onClick={() => navigate(-1)}
                 >
                     Discard
+                </button>
+            </div>
+        </div>
+    );
+};
+
+const ErrorPage: FunctionComponent = () => {
+    const navigate = useNavigate();
+
+    return (
+        <div className="flex flex-col">
+            <div className="mt-5">Invalid route, please redirect.</div>
+            <div className="mt-10 flex flex-row justify-evenly">
+                <button
+                    className="w-24 cursor-pointer rounded-md border-2 border-blue-700 text-blue-700 hover:font-bold"
+                    onClick={() => navigate(-1)}
+                >
+                    Go Back
+                </button>
+                <button
+                    className="w-24 cursor-pointer rounded-md border-2 border-blue-700 text-blue-700 hover:font-bold"
+                    onClick={() => navigate("..")}
+                >
+                    Go Home
                 </button>
             </div>
         </div>
