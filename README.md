@@ -4,6 +4,7 @@ This is a Wiki app with a React - [Next.js](https://nextjs.org/) frontend and a 
 
 Most if not all relevant frontend code exists inside `./src/pages/` within the `index.tsx` and `_app.tsx` files.
 This was a conscious descision as splitting up components into seperate files can slow down development.
+
 The provided backend has been placed inside `./src/server/`. One small edit to the `wiki.py` file within the `write_page` function:
 
 ```python
