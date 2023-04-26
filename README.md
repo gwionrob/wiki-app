@@ -59,7 +59,7 @@ This is a quick description of the url routing present in the project:
 
 ## Tests
 
-Tests can be run with `npm test` from anywhere withint the passfort directory.
+Tests can be run with `npm test` from anywhere withint the `passfort` directory.
 
 Written tests can be found at `./src/__tests__`.
 
@@ -67,7 +67,7 @@ Written tests can be found at `./src/__tests__`.
 
 -   [ ] Navigating manually to a page that exists: `sitename/page/pagename/revision` with a revision that doesnt prompts the user with a
         "Page: pagename not found" message. The History dropdown with known revisions is also not functioning
--   [ ] If the user creates / edits a page with a word without spaces, this word will extend beyond the page when viewing it.
+-   [ ] If the user creates / edits a page with a a _very_ long word without spaces, this word will extend beyond the page when viewing it.
         This can be resolved with css property `word-break: break-all;`, however this creates breaks in short words
 -   [ ] Very rarely, after page edit, the user is navigated to the previous revision and not the new one. This is probably a asynchrony issue
 -   [ ] Web page is quite bland, background color / some images or logos could help bring it to life
