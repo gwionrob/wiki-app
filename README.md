@@ -33,7 +33,7 @@ Below are the steps required to get a local environment up and running with the 
 8. Once backend server is up and running, you can run `npm run dev` from anywhere within the `passfort`
    directory to start the local environment, located at `http://localhost:3000/` by default
 
-## Route
+## Routes
 
 This is a quick description of the url routing present in the project:
 
