@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Routes, Route, Link, useParams, useNavigate } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
 import type { NextPage } from "next";
 import type { FormEvent, FunctionComponent } from "react";
-import ReactMarkdown from "react-markdown";
 
 type Pages = {
     titles: Array<string>;
@@ -15,40 +15,6 @@ type PageData = {
 
 type RevisionsData = {
     revisions: Array<number>;
-};
-
-export const Home: NextPage = () => {
-    const [titles, setTitles] = useState<Array<string>>([]);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        fetch("/api/pages")
-            .then((res) => res.json().then((data) => data as Pages))
-            .then((data) => {
-                setTitles(data.titles);
-            })
-            .catch((error) => console.log(error));
-    }, [navigate]);
-
-    return (
-        <div className="m-5 flex flex-col items-center font-mono">
-            <div id="top-bar" className="mb-5 flex justify-center">
-                <h1
-                    className="w-fit cursor-pointer text-center text-2xl hover:font-bold"
-                    onClick={() => navigate("/")}
-                >
-                    Passfort.wiki
-                </h1>
-            </div>
-
-            <Routes>
-                <Route path="/" element={<Content titles={titles} />} />
-                <Route path="/page/:title/:revision?" element={<Page />} />
-                <Route path="/create/:title?" element={<EditPage />} />
-                <Route path="*" element={<ErrorPage />} />
-            </Routes>
-        </div>
-    );
 };
 
 const Content: FunctionComponent<Pages> = ({ titles }) => {
@@ -86,6 +52,64 @@ const Content: FunctionComponent<Pages> = ({ titles }) => {
                     Create New Page
                 </Link>
             </article>
+        </div>
+    );
+};
+
+const ErrorPage: FunctionComponent = () => {
+    const navigate = useNavigate();
+
+    return (
+        <div className="flex flex-col">
+            <div className="mt-5">Invalid route, please redirect.</div>
+            <div className="mt-10 flex flex-row justify-evenly">
+                <button
+                    className="w-24 cursor-pointer rounded-md border-2 border-blue-700 text-blue-700 hover:font-bold"
+                    onClick={() => navigate(-1)}
+                >
+                    Go Back
+                </button>
+                <button
+                    className="w-24 cursor-pointer rounded-md border-2 border-blue-700 text-blue-700 hover:font-bold"
+                    onClick={() => navigate("..")}
+                >
+                    Go Home
+                </button>
+            </div>
+        </div>
+    );
+};
+
+export const Home: NextPage = () => {
+    const [titles, setTitles] = useState<Array<string>>([]);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        fetch("/api/pages")
+            .then((res) => res.json().then((data) => data as Pages))
+            .then((data) => {
+                setTitles(data.titles);
+            })
+            .catch((error) => console.log(error));
+    }, [navigate]);
+
+    return (
+        <div className="m-5 flex flex-col items-center font-mono">
+            <div id="top-bar" className="mb-5 flex justify-center">
+                <h1
+                    className="w-fit cursor-pointer text-center text-2xl hover:font-bold"
+                    onClick={() => navigate("/")}
+                >
+                    Passfort.wiki
+                </h1>
+            </div>
+
+            <Routes>
+                <Route path="/" element={<Content titles={titles} />} />
+                <Route path="/page/:title/:revision?" element={<Page />} />
+                <Route path="/create/:title?" element={<EditPage />} />
+                <Route path="*" element={<ErrorPage />} />
+            </Routes>
         </div>
     );
 };
@@ -281,30 +305,6 @@ export const EditPage: FunctionComponent = () => {
                     onClick={() => navigate(-1)}
                 >
                     Discard
-                </button>
-            </div>
-        </div>
-    );
-};
-
-const ErrorPage: FunctionComponent = () => {
-    const navigate = useNavigate();
-
-    return (
-        <div className="flex flex-col">
-            <div className="mt-5">Invalid route, please redirect.</div>
-            <div className="mt-10 flex flex-row justify-evenly">
-                <button
-                    className="w-24 cursor-pointer rounded-md border-2 border-blue-700 text-blue-700 hover:font-bold"
-                    onClick={() => navigate(-1)}
-                >
-                    Go Back
-                </button>
-                <button
-                    className="w-24 cursor-pointer rounded-md border-2 border-blue-700 text-blue-700 hover:font-bold"
-                    onClick={() => navigate("..")}
-                >
-                    Go Home
                 </button>
             </div>
         </div>
