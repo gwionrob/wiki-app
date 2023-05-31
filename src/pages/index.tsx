@@ -18,10 +18,8 @@ type RevisionsData = {
 };
 
 const Content: FunctionComponent<Pages> = ({ titles }) => {
-    const links = [];
-
-    for (const title of titles) {
-        links.push(
+    const links = titles.map((title) => {
+        return (
             <li className="mb-2" key={title}>
                 <Link
                     className="cursor-pointer hover:font-bold"
@@ -29,14 +27,14 @@ const Content: FunctionComponent<Pages> = ({ titles }) => {
                 >
                     {title}
                 </Link>
-            </li>,
+            </li>
         );
-    }
+    });
 
     return (
         <div className="flex flex-col items-center justify-center">
             <div className="mb-4">
-                Welcome to Passfort.wiki, please select from the below pages, or
+                Welcome to Gwi.wiki, please select from the below pages, or
                 create your own!
             </div>
             <article
@@ -100,7 +98,7 @@ export const Home: NextPage = () => {
                     className="w-fit cursor-pointer text-center text-2xl hover:font-bold"
                     onClick={() => navigate("/")}
                 >
-                    Passfort.wiki
+                    Gwi.wiki
                 </h1>
             </div>
 
@@ -117,8 +115,8 @@ export const Home: NextPage = () => {
 export const Page: FunctionComponent = () => {
     const { title, revision } = useParams();
     const [content, setContent] = useState("");
-    const navigate = useNavigate();
     const [revisions, setRevisions] = useState<Array<number>>([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         Promise.all([
@@ -241,10 +239,8 @@ export const EditPage: FunctionComponent = () => {
                 page: inputRef.current !== null ? inputRef.current.value : "",
             }),
         })
-            .then((res) => console.log(res))
+            .then(() => navigate(`../page/${change}`))
             .catch((error) => console.log(error));
-
-        navigate(`../page/${change}`);
     };
 
     const handleInputFN = (event: FormEvent) => {

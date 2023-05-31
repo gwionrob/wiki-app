@@ -23,14 +23,14 @@ This was because the file is later opened with the `wb` option, which only accep
 
 Below are the steps required to get a local environment up and running with the git bundle:
 
-1. Download `passfort.bundle`
-2. Place `passfort.bundle` in your desired directory
-3. Run `git clone passfort.bundle`, this will create a `passfort` directory in your current directory
-4. Navigate into the newly created `passfort` directory
+1. Download `wiki.bundle`
+2. Place `wiki.bundle` in your desired directory
+3. Run `git clone wiki.bundle`, this will create a `wiki` directory in your current directory
+4. Navigate into the newly created `wiki` directory
 5. Run `git pull origin main`
 6. Navigate to `./src/server/`
 7. Run the `./run.sh` script within the `server` directory
-8. Once backend server is up and running, you can run `npm run dev` from anywhere within the `passfort`
+8. Once backend server is up and running, you can run `npm run dev` from anywhere within the `wiki`
    directory to start the local environment, located at `http://localhost:3000/` by default
 
 ## Routes
@@ -59,7 +59,7 @@ This is a quick description of the url routing present in the project:
 
 ## Tests
 
-Tests can be run with `npm test` from anywhere withint the `passfort` directory.
+Tests can be run with `npm test` from anywhere withint the `wiki` directory.
 
 Written tests can be found at `./src/__tests__`.
 

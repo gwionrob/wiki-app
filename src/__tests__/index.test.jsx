@@ -15,7 +15,7 @@ describe("Home", () => {
         render(<Home />, { wrapper: Router });
 
         const heading = screen.getByRole("heading", {
-            name: /Passfort\.wiki/i,
+            name: /Gwi\.wiki/i,
         });
 
         expect(heading).toBeInTheDocument();
